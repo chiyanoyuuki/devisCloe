@@ -1,1 +1,149 @@
-/* You can add global styles to this file, and also import other style files */
+#htmlContent {
+  width: 595px !important;
+  height: 842px !important;
+  border: 2px solid transparent;
+  position: relative;
+}
+.rosebg {
+  background-color: #ab83ba22;
+  font-size: 25.1px;
+  text-align: center;
+  letter-spacing: 15px;
+}
+.logo {
+  width: 30%;
+  margin: auto;
+  display: flex;
+  margin-top: 5px;
+  margin-bottom: 10px;
+}
+p {
+  font-family: "Cardo", serif !important;
+  font-weight: 400;
+  font-style: normal;
+  margin: 0;
+  font-size: 14px;
+  letter-spacing: 1px;
+}
+.date {
+  text-align: center;
+  font-size: 15px;
+}
+.ligne {
+  border-bottom: 1px solid black;
+  width: 90%;
+  display: flex;
+  margin: auto;
+}
+.fullligne {
+  border-bottom: 1px solid black;
+  width: 100%;
+  display: flex;
+  margin: auto;
+}
+.margtop {
+  margin-top: 25px;
+}
+.content {
+  padding: 0px 15px;
+  position: relative;
+}
+.cloe p {
+  font-weight: bold;
+  position: relative;
+}
+.nobold {
+  font-weight: unset !important;
+}
+.bold {
+  font-weight: bold !important;
+}
+.flex {
+  display: flex;
+}
+.between {
+  justify-content: space-between;
+}
+.tinytext {
+  font-size: 12px !important;
+}
+.devis {
+  text-align: right;
+}
+.client p {
+  text-align: right;
+}
+.table {
+  display: flex;
+  p {
+    width: 10%;
+    white-space: nowrap;
+    text-align: center;
+    font-size: 10px !important;
+  }
+  p:nth-child(2) {
+    width: 45%;
+  }
+  p:nth-child(3) {
+    width: 20%;
+  }
+  p:nth-child(5) {
+    width: 15%;
+  }
+}
+.echeance {
+  width: 75%;
+}
+.total {
+  width: 15%;
+  text-align: right;
+}
+.minitxt {
+  font-size: 8px !important;
+  position: relative;
+  text-align: right;
+  width: 100%;
+  top: -4px;
+}
+.infos p {
+  font-size: 9px !important;
+}
+ul {
+  margin: 0;
+  font-size: 9px;
+  padding: 0px 20px;
+}
+.infos {
+  margin-top: 20px;
+}
+.signature {
+  font-size: 10px !important;
+  margin-top: 10px;
+}
+.iban p {
+  color: #ab83ba;
+  font-size: 12px !important;
+}
+.thank p {
+  color: #87528e;
+  font-size: 29px !important;
+  text-align: center;
+}
+.bottom {
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
+  .flex {
+    margin: 0px 20px;
+  }
+  .iban {
+    width: 60%;
+  }
+  .thank {
+    width: 40%;
+    p {
+      font-weight: bold;
+      letter-spacing: 10px;
+    }
+  }
+}
