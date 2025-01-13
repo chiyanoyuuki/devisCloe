@@ -1,4 +1,4 @@
-import { Component, isDevMode, OnInit } from '@angular/core';
+import { Component, HostListener, isDevMode, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { jsPDF } from 'jspdf';
 import { CommonModule, DatePipe } from '@angular/common';
@@ -18,6 +18,8 @@ import { HttpClient } from '@angular/common/http';
 export class AppComponent implements OnInit {
   values: any = [];
   dataprestas: any = [];
+  public innerWidth: any = window.outerWidth;
+  public innerHeight: any = window.outerHeight;
   prestas: any = [
     {
       nom: 'Frais de déplacement (Jour-J)',
@@ -114,12 +116,24 @@ export class AppComponent implements OnInit {
     },
   ];
 
+  paysage = true;
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    this.innerHeight = event.target.innerHeight;
+    this.innerWidth = event.target.innerWidth;
+
+    if (event.target.innerHeight > event.target.innerWidth)
+      this.paysage = false;
+    else this.paysage = true;
+  }
+
   constructor(private datePipe: DatePipe, private http: HttpClient) {
     const now = new Date();
     let twoweeks = new Date();
     twoweeks = new Date(twoweeks.getTime() + 14 * 24 * 60 * 60 * 1000);
     this.values[0] = this.datePipe.transform(now, 'dd/MM/yyyy') || '';
-    this.values[1] = '047';
+    this.values[1] = '2';
     this.values[2] = this.datePipe.transform(now, 'yyyy') || '';
     this.values[3] = 'Cloé Chaudron';
     this.values[5] = '126 Rue de la Cerisaie';

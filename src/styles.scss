@@ -222,3 +222,7 @@ ul {
   font-weight: bold;
   color: red;
 }
+.noOverflow {
+  max-height: unset !important;
+  overflow: hidden !important;
+}
