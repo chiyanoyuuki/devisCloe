@@ -35,10 +35,11 @@
       </div>
       <div class="fullligne"></div>
       <div class="table" *ngFor="let presta of prestas">
-        <ng-container *ngIf="presta.qte > 0">
+        <ng-container *ngIf="presta.qte > 0 || presta.qte == '?'">
           <p>
-            {{ presta.qte }}{{ presta.kilorly ? "km" : ""
-            }}{{ presta.hourly ? "h" : "" }}
+            {{ presta.qte == "?" ? "À definir" : presta.qte
+            }}{{ presta.kilorly && presta.qte != "?" ? "km" : ""
+            }}{{ presta.hourly && presta.qte != "?" ? "h" : "" }}
           </p>
           <p class="textoverflow">{{ presta.nom }}</p>
           <p>
