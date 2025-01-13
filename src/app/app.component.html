@@ -60,7 +60,9 @@
       <div class="flex">
         <p class="tinytext echeance">Échéance : {{ values[13] }}</p>
         <p class="bold">Total</p>
-        <p class="bold total">{{ calcTot() }},00€</p>
+        <p class="bold total">
+          {{ calcTot() }}{{ calcTot() < 100 ? ",00" : "" }}€
+        </p>
       </div>
       <p class="minitxt">TVA Non Applicable - article 293 B du CGI</p>
 
