@@ -192,11 +192,7 @@ export class AppComponent implements OnInit {
 
   getDevis() {
     this.http
-      .get<any>(
-        'http' +
-          (isDevMode() ? '' : 's') +
-          '://chiyanh.cluster031.hosting.ovh.net/devisget'
-      )
+      .get<any>('http://chiyanh.cluster031.hosting.ovh.net/devisget')
       .subscribe((data) => {
         console.log(data);
         this.values[1] = data.num;
@@ -208,19 +204,14 @@ export class AppComponent implements OnInit {
       num: this.values[1] + 1,
     };
     from(
-      fetch(
-        'http' +
-          (isDevMode() ? '' : 's') +
-          '://chiyanh.cluster031.hosting.ovh.net/devisset',
-        {
-          body: JSON.stringify(dataToSend),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          method: 'POST',
-          mode: 'no-cors',
-        }
-      )
+      fetch('http://chiyanh.cluster031.hosting.ovh.net/devisset', {
+        body: JSON.stringify(dataToSend),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: 'POST',
+        mode: 'no-cors',
+      })
     ).subscribe((data: any) => {});
   }
 }
