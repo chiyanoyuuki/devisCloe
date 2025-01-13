@@ -18,8 +18,6 @@ import { HttpClient } from '@angular/common/http';
 export class AppComponent implements OnInit {
   values: any = [];
   dataprestas: any = [];
-  public innerWidth: any = window.outerWidth;
-  public innerHeight: any = window.outerHeight;
   prestas: any = [
     {
       nom: 'Frais de déplacement (Jour-J)',
@@ -116,6 +114,8 @@ export class AppComponent implements OnInit {
     },
   ];
 
+  public innerWidth: any = window.innerWidth;
+  public innerHeight: any = window.innerHeight;
   paysage = true;
 
   @HostListener('window:resize', ['$event'])

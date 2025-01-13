@@ -11,6 +11,9 @@
   border: 2px solid transparent;
   position: relative;
 }
+.portrait .inputs {
+  width: 595px !important;
+}
 * {
   -webkit-user-select: none; /* Safari */
   -ms-user-select: none; /* IE 10 and IE 11 */
