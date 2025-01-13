@@ -41,14 +41,17 @@ export class AppComponent implements OnInit {
     {
       nom: 'Maquillage et coiffure',
       prix: 420,
+      onlyOne: true,
     },
     {
       nom: 'Maquillage',
       prix: 220,
+      onlyOne: true,
     },
     {
       nom: 'Coiffure',
       prix: 220,
+      onlyOne: true,
     },
     {
       nom: 'Maquillage et coiffure supplémentaire (Mariage civil, seconde muse en beauté)',
@@ -97,6 +100,7 @@ export class AppComponent implements OnInit {
     {
       nom: 'Maquillage Marié',
       prix: 30,
+      onlyOne: true,
     },
     {
       nom: 'Présence avant 7h',
@@ -106,7 +110,6 @@ export class AppComponent implements OnInit {
     {
       nom: 'Suivi Mariée',
       prix: 50,
-      onlyOne: true,
       hourly: true,
     },
   ];

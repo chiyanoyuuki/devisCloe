@@ -181,6 +181,10 @@ ul {
     }
   }
 }
+.disabled {
+  color: white !important;
+  pointer-events: none;
+}
 .green {
   font-weight: bold;
   color: rgb(57, 155, 57);
