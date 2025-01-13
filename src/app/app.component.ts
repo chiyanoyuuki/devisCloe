@@ -148,6 +148,8 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
+    if (this.innerHeight > this.innerWidth) this.paysage = false;
+    else this.paysage = true;
     this.getDevis();
   }
 
