@@ -3,12 +3,46 @@
   height: 842px !important;
   border: 2px solid transparent;
   position: relative;
+  min-width: 595px !important;
+}
+.inputs {
+  width: -moz-available;
+  height: 842px !important;
+  border: 2px solid transparent;
+  position: relative;
+}
+* {
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+}
+.textoverflow {
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 .rosebg {
   background-color: #ab83ba22;
   font-size: 25.1px;
   text-align: center;
   letter-spacing: 15px;
+}
+.center {
+  justify-content: center;
+}
+.right {
+  justify-content: right;
+}
+input {
+  text-align: center;
+  width: 80px;
+  margin: 0px 5px;
+}
+.inputs .flex {
+  width: 100%;
+  margin: 2px 0px;
+}
+.big input {
+  width: 180px;
 }
 .logo {
   width: 30%;
@@ -146,4 +180,41 @@ ul {
       letter-spacing: 10px;
     }
   }
+}
+.green {
+  font-weight: bold;
+  color: rgb(57, 155, 57);
+}
+.prestas {
+  max-height: 300px;
+  overflow-y: scroll;
+  border: 1px solid black;
+  margin: 20px 0px;
+  padding: 10px;
+  .flex {
+    width: unset;
+  }
+  input {
+    width: 60px;
+    font-size: 11px;
+  }
+  .qte {
+    width: 100px;
+  }
+  .nom {
+    width: 80%;
+    text-align: center;
+  }
+}
+.title {
+  p {
+    text-align: center;
+    width: 100% !important;
+    border-bottom: 1px solid black;
+  }
+}
+.clickable:hover {
+  cursor: pointer;
+  font-weight: bold;
+  color: red;
 }

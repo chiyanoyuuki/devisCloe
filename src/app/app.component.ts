@@ -1,16 +1,139 @@
-import { Component } from '@angular/core';
+import { Component, isDevMode, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { jsPDF } from 'jspdf';
+import { CommonModule, DatePipe } from '@angular/common';
 import html2canvas from 'html2canvas';
+import { FormsModule } from '@angular/forms';
+import { from } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, FormsModule, CommonModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
+  providers: [DatePipe],
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
+  values: any = [];
+  dataprestas: any = [];
+  prestas: any = [
+    {
+      nom: 'Frais de déplacement (Jour-J)',
+      prix: 0.4,
+      kilorly: true,
+    },
+    {
+      nom: 'Frais de déplacement (Essai)',
+      prix: 0.4,
+      kilorly: true,
+    },
+    {
+      nom: 'Frais de déplacement (Celma)',
+      prix: 0.4,
+      kilorly: true,
+    },
+    {
+      nom: 'Mariée (essai et jour-J)',
+      titre: true,
+    },
+    {
+      nom: 'Maquillage et coiffure',
+      prix: 420,
+    },
+    {
+      nom: 'Maquillage',
+      prix: 220,
+    },
+    {
+      nom: 'Coiffure',
+      prix: 220,
+    },
+    {
+      nom: 'Maquillage et coiffure supplémentaire (Mariage civil, seconde muse en beauté)',
+      prix: 300,
+    },
+    {
+      nom: 'Invitée (jour-J)',
+      titre: true,
+    },
+    {
+      nom: 'Maquillage et coiffure',
+      prix: 130,
+    },
+    {
+      nom: 'Coiffure (Attache complète)',
+      prix: 80,
+    },
+    {
+      nom: 'Coiffure (Attache partielle)',
+      prix: 70,
+    },
+    {
+      nom: 'Brushing Hollywoodien',
+      prix: 70,
+    },
+    {
+      nom: 'Maquillage',
+      prix: 65,
+    },
+    {
+      nom: 'Coiffure enfant (-13ans)',
+      prix: 30,
+    },
+    {
+      nom: 'Options',
+      titre: true,
+    },
+    {
+      nom: 'Pose Faux-cils',
+      prix: 10,
+    },
+    {
+      nom: 'Pose Faux-cils (bouquets)',
+      prix: 0,
+    },
+    {
+      nom: 'Maquillage Marié',
+      prix: 30,
+    },
+    {
+      nom: 'Présence avant 7h',
+      prix: 30,
+      onlyOne: true,
+    },
+    {
+      nom: 'Suivi Mariée',
+      prix: 50,
+      onlyOne: true,
+      hourly: true,
+    },
+  ];
+
+  constructor(private datePipe: DatePipe, private http: HttpClient) {
+    const now = new Date();
+    let twoweeks = new Date();
+    twoweeks = new Date(twoweeks.getTime() + 14 * 24 * 60 * 60 * 1000);
+    this.values[0] = this.datePipe.transform(now, 'dd/MM/yyyy') || '';
+    this.values[1] = '047';
+    this.values[2] = this.datePipe.transform(now, 'yyyy') || '';
+    this.values[3] = 'Cloé Chaudron';
+    this.values[5] = '126 Rue de la Cerisaie';
+    this.values[7] = '84400 Gargas';
+    this.values[9] = '06.68.64.44.02';
+    this.values[11] = 'cloe.chaudron@outlook.com';
+    this.values[13] = this.datePipe.transform(twoweeks, 'dd/MM/yyyy') || '';
+
+    this.prestas.forEach((presta: any) => {
+      presta.qte = 0;
+    });
+  }
+
+  ngOnInit() {
+    this.getDevis();
+  }
+
   generatePDFfromHTML() {
     const element = document.getElementById('htmlContent');
 
@@ -35,7 +158,69 @@ export class AppComponent {
         heightLeft -= pageHeight;
       }
 
-      pdf.save('devis.pdf');
+      let nom = 'DEVIS_';
+      if (this.values[1] < 100) nom = nom + '0';
+      if (this.values[1] < 10) nom = nom + '0';
+      nom = nom + this.values[1];
+      nom = nom + '_' + this.values[2];
+
+      pdf.save(nom + '.pdf');
+      this.trackVisit();
     });
+  }
+
+  addPresta() {
+    this.prestas.push({ nom: '', qte: 0, prix: 50, reduc: '' });
+  }
+
+  calc(presta: any) {
+    let prix = presta.prix * presta.qte;
+    if (presta.reduc) prix = prix - (prix * presta.reduc) / 100;
+    if (presta.kilorly && presta.qte < 11) prix = 0;
+    return prix;
+  }
+
+  calcTot() {
+    let prix = 0;
+    this.prestas
+      .filter((presta: any) => presta.qte > 0)
+      .forEach((presta: any) => {
+        prix += this.calc(presta);
+      });
+    return prix;
+  }
+
+  getDevis() {
+    this.http
+      .get<any>(
+        'http' +
+          (isDevMode() ? '' : 's') +
+          '://chiyanh.cluster031.hosting.ovh.net/devisget'
+      )
+      .subscribe((data) => {
+        console.log(data);
+        this.values[1] = data.num;
+      });
+  }
+
+  trackVisit() {
+    const dataToSend = {
+      num: this.values[1] + 1,
+    };
+    from(
+      fetch(
+        'http' +
+          (isDevMode() ? '' : 's') +
+          '://chiyanh.cluster031.hosting.ovh.net/devisset',
+        {
+          body: JSON.stringify(dataToSend),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          method: 'POST',
+          mode: 'no-cors',
+        }
+      )
+    ).subscribe((data: any) => {});
   }
 }

@@ -1,109 +1,260 @@
-<div>
-  <button (click)="generatePDFfromHTML()">Générer PDF</button>
-</div>
-<div id="htmlContent">
-  <img src="logo.png" class="logo" />
-  <p class="rosebg" style="color: white">DEVIS</p>
-  <p class="date">Date : 16/05/2025</p>
-  <div class="ligne"></div>
+<div class="flex">
+  <div id="htmlContent">
+    <img src="logo.png" class="logo" />
+    <p class="rosebg" style="color: white">DEVIS</p>
+    <p class="date">Date : {{ values[0] }}</p>
+    <div class="ligne"></div>
 
-  <div class="content">
-    <p class="devis tinytext">DEVIS N° 047-2024</p>
-    <div class="flex between">
-      <div class="cloe">
-        <p>Cloé Chaudron</p>
-        <p>126 Rue de la Cerisaie</p>
-        <p>84400 Gargas</p>
-        <p>06.68.64.44.02</p>
-        <p class="nobold">cloe.chaudron&#64;outlook.com</p>
-      </div>
-      <div class="cloe client">
-        <p>Cloé Chaudron</p>
-        <p>126 Rue de la Cerisaie</p>
-        <p>84400 Gargas</p>
-        <p>06.68.64.44.02</p>
-        <p class="nobold">cloe.chaudron&#64;outlook.com</p>
-      </div>
-    </div>
-    <div class="table margtop">
-      <p>Quantité</p>
-      <p>Description</p>
-      <p>Prix Unitaire</p>
-      <p>Reduction</p>
-      <p>Total</p>
-    </div>
-    <div class="fullligne"></div>
-    <div class="table">
-      <p>1</p>
-      <p>Frais de déplacement Jour-J (Aller/Retour)</p>
-      <p>33.00€</p>
-      <p>10%</p>
-      <p>30.00€</p>
-    </div>
-    <div class="fullligne"></div>
-    <div class="flex">
-      <p class="tinytext echeance">Échéance : 30/12/2024</p>
-      <p class="bold">Total</p>
-      <p class="bold total">30.00€</p>
-    </div>
-    <p class="minitxt">TVA Non Applicable - article 293 B du CGI</p>
-
-    <div class="infos">
-      <p>
-        Ce devis concerne les prestations nommées. Il est soumis aux conditions
-        mentionnées ci-dessous :
+    <div class="content">
+      <p class="devis tinytext">
+        DEVIS N° {{ values[1] < 100 ? "0" : "" }}{{ values[1] < 10 ? "0" : ""
+        }}{{ values[1] }}-{{ values[2] }}
       </p>
-      <ul>
-        <li>
+      <div class="flex between">
+        <div class="cloe">
+          <p>{{ values[3] }}</p>
+          <p>{{ values[5] }}</p>
+          <p>{{ values[7] }}</p>
+          <p>{{ values[9] }}</p>
+          <p class="nobold">{{ values[11] }}</p>
+        </div>
+        <div class="cloe client">
+          <p>{{ values[4] }}</p>
+          <p>{{ values[6] }}</p>
+          <p>{{ values[8] }}</p>
+          <p>{{ values[10] }}</p>
+          <p class="nobold">{{ values[12] }}</p>
+        </div>
+      </div>
+      <div class="table margtop">
+        <p>Quantité</p>
+        <p>Description</p>
+        <p>Prix Unitaire</p>
+        <p>Reduction</p>
+        <p>Total</p>
+      </div>
+      <div class="fullligne"></div>
+      <div class="table" *ngFor="let presta of prestas">
+        <ng-container *ngIf="presta.qte > 0">
+          <p>{{ presta.qte }}{{ presta.kilorly ? "km" : "" }}</p>
+          <p class="textoverflow">{{ presta.nom }}</p>
           <p>
-            30% d'arrhes de la prestation mariée sont à verser afin de bloquer
-            la date.
+            {{ presta.prix }}{{ presta.kilorly ? "/km" : ""
+            }}{{ presta.hourly ? "/h" : "" }}€
           </p>
-        </li>
-        <li><p>Le solde est à verser au plus tard le jour du mariage.</p></li>
-        <li>
-          <p>
-            Les indemnités kilométriques sont facturées au tarif de
-            0,50€/kilomètre. Péages en plus.
-          </p>
-        </li>
-        <li>
-          <p>
-            Les frais de déplacements sont à verser au plus tard le jour du dit
-            déplacement.
-          </p>
-        </li>
-        <li>
-          <p>
-            Le présent devis est valable jusqu'à la fin des prestations
-            mentionnées. Des prestations peuvent être modifiées, ajoutées mais
-            en aucun cas supprimées
-          </p>
-        </li>
-      </ul>
+          <p>{{ presta.reduc }}{{ presta.reduc ? "%" : "" }}</p>
+          <p *ngIf="calc(presta) > 0">{{ calc(presta) | number : "1.0-2" }}€</p>
+          <p *ngIf="calc(presta) == 0" class="green">Offert</p>
+        </ng-container>
+      </div>
+      <div class="fullligne"></div>
+      <div class="flex">
+        <p class="tinytext echeance">Échéance : {{ values[13] }}</p>
+        <p class="bold">Total</p>
+        <p class="bold total">{{ calcTot() | number : "1.0-2" }}€</p>
+      </div>
+      <p class="minitxt">TVA Non Applicable - article 293 B du CGI</p>
+
+      <div class="infos">
+        <p>
+          Ce devis concerne les prestations nommées. Il est soumis aux
+          conditions mentionnées ci-dessous :
+        </p>
+        <ul>
+          <li>
+            <p>
+              30% d'arrhes de la prestation mariée sont à verser afin de bloquer
+              la date.
+            </p>
+          </li>
+          <li><p>Le solde est à verser au plus tard le jour du mariage.</p></li>
+          <li>
+            <p>
+              Les indemnités kilométriques sont facturées au tarif de
+              0,40€/kilomètre. Péages en plus.
+            </p>
+          </li>
+          <li>
+            <p>
+              Les frais de déplacements sont à verser au plus tard le jour du
+              dit déplacement.
+            </p>
+          </li>
+          <li>
+            <p>
+              Le présent devis est valable jusqu'à la fin des prestations
+              mentionnées. Des prestations peuvent être modifiées, ajoutées mais
+              en aucun cas supprimées
+            </p>
+          </li>
+        </ul>
+      </div>
+
+      <p class="signature">
+        Pour accepter ce devis, apposez votre signature ici et renvoyez-le :
+      </p>
     </div>
 
-    <p class="signature">
-      Pour accepter ce devis, apposez votre signature ici et renvoyez-le :
-    </p>
+    <div class="sign"></div>
+
+    <div class="bottom">
+      <p class="rosebg" style="color: white">&nbsp;</p>
+      <div class="flex">
+        <div class="iban">
+          <p>Coordonnées Bancaires</p>
+          <p>Non : Société Générale</p>
+          <p>IBAN : FR76 3000 3031 8400 1500 2190 924</p>
+          <p>BIC : SOGEFRPP</p>
+          <p>SIRET : 883 822 801 00014</p>
+        </div>
+        <div class="thank">
+          <p>THANK</p>
+          <p>YOU</p>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div class="sign"></div>
+  <div class="inputs">
+    <div class="flex center">
+      <p>Date :</p>
+      <input type="text" [(ngModel)]="values[0]" placeholder="Date.." />
+    </div>
+    <div class="ligne"></div>
+    <div class="flex right">
+      <p>Devis N°</p>
+      <input type="text" [(ngModel)]="values[1]" placeholder="N° du devis.." />
+      <p>-</p>
+      <input type="text" [(ngModel)]="values[2]" placeholder="Année.." />
+    </div>
+    <div class="flex between">
+      <div class="flex big">
+        <input type="text" [(ngModel)]="values[3]" placeholder="Nom Cloé.." />
+      </div>
+      <div class="flex right big">
+        <input type="text" [(ngModel)]="values[4]" placeholder="Nom client.." />
+      </div>
+    </div>
+    <div class="flex between">
+      <div class="flex big">
+        <input
+          type="text"
+          [(ngModel)]="values[5]"
+          placeholder="Adresse Cloé.."
+        />
+      </div>
+      <div class="flex right big">
+        <input
+          type="text"
+          [(ngModel)]="values[6]"
+          placeholder="Adresse client.."
+        />
+      </div>
+    </div>
+    <div class="flex between">
+      <div class="flex big">
+        <input
+          type="text"
+          [(ngModel)]="values[7]"
+          placeholder="Code postal + ville Cloé.."
+        />
+      </div>
+      <div class="flex right big">
+        <input
+          type="text"
+          [(ngModel)]="values[8]"
+          placeholder="Code postal + ville client.."
+        />
+      </div>
+    </div>
+    <div class="flex between">
+      <div class="flex big">
+        <input
+          type="text"
+          [(ngModel)]="values[9]"
+          placeholder="Téléphone Cloé.."
+        />
+      </div>
+      <div class="flex right big">
+        <input
+          type="text"
+          [(ngModel)]="values[10]"
+          placeholder="Téléphone client.."
+        />
+      </div>
+    </div>
+    <div class="flex between">
+      <div class="flex big">
+        <input type="text" [(ngModel)]="values[11]" placeholder="Mail Cloé.." />
+      </div>
+      <div class="flex right big">
+        <input
+          type="text"
+          [(ngModel)]="values[12]"
+          placeholder="Mail client.."
+        />
+      </div>
+    </div>
 
-  <div class="bottom">
-    <p class="rosebg" style="color: white">&nbsp;</p>
-    <div class="flex">
-      <div class="iban">
-        <p>Coordonnées Bancaires</p>
-        <p>Non : Société Générale</p>
-        <p>IBAN : FR76 3000 3031 8400 1500 2190 924</p>
-        <p>BIC : SOGEFRPP</p>
-        <p>SIRET : 883 822 801 00014</p>
+    <div class="prestas">
+      <div
+        *ngFor="let presta of prestas"
+        class="flex between"
+        [class.title]="presta.titre"
+      >
+        <ng-container *ngIf="!presta.titre; else elseBlock">
+          <div class="flex qte">
+            <p
+              class="clickable"
+              (click)="
+                presta.qte > 0 ? (presta.qte = presta.qte - 1) : undefined
+              "
+            >
+              -
+            </p>
+            <input
+              type="text"
+              [(ngModel)]="presta.qte"
+              placeholder="Quantité.."
+            />
+            <p class="clickable" (click)="presta.qte = presta.qte + 1">+</p>
+          </div>
+          <input
+            type="text"
+            class="nom"
+            [(ngModel)]="presta.nom"
+            placeholder="Nom.."
+          />
+          <input type="text" [(ngModel)]="presta.prix" placeholder="Prix.." />
+          <input
+            type="text"
+            [(ngModel)]="presta.reduc"
+            placeholder="Réduction.."
+          />
+        </ng-container>
+        <ng-template #elseBlock>
+          <p>{{ presta.nom }}</p>
+        </ng-template>
       </div>
-      <div class="thank">
-        <p>THANK</p>
-        <p>YOU</p>
+      <div class="flex center">
+        <button (click)="addPresta()">Ajouter prestation</button>
       </div>
+    </div>
+
+    <div class="flex between">
+      <div class="flex">
+        <p>Échéance :</p>
+        <input type="text" [(ngModel)]="values[13]" placeholder="Échéance.." />
+      </div>
+      <div class="flex right big">
+        <p>Total : {{ calcTot() | number : "1.0-2" }}€</p>
+      </div>
+    </div>
+
+    <div>
+      <button (click)="generatePDFfromHTML()" class="flex center">
+        Générer PDF
+      </button>
     </div>
   </div>
 </div>
