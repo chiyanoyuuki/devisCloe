@@ -20,17 +20,17 @@ export class AppComponent implements OnInit {
   dataprestas: any = [];
   prestas: any = [
     {
-      nom: 'Frais de déplacement (Jour-J)',
+      nom: 'Frais de déplacement Jour-J (Aller/Retour)',
       prix: 0.4,
       kilorly: true,
     },
     {
-      nom: 'Frais de déplacement (Essai)',
+      nom: 'Frais de déplacement Essai (Aller/Retour)',
       prix: 0.4,
       kilorly: true,
     },
     {
-      nom: 'Frais de déplacement (Celma)',
+      nom: 'Frais de déplacement renfort (Aller/Retour)',
       prix: 0.4,
       kilorly: true,
     },
@@ -39,17 +39,17 @@ export class AppComponent implements OnInit {
       titre: true,
     },
     {
-      nom: 'Maquillage et coiffure',
+      nom: 'Forfait Mariée Complet',
       prix: 420,
       onlyOne: true,
     },
     {
-      nom: 'Maquillage',
+      nom: 'Maquillage Mariée ',
       prix: 220,
       onlyOne: true,
     },
     {
-      nom: 'Coiffure',
+      nom: 'Coiffure Mariée',
       prix: 220,
       onlyOne: true,
     },
@@ -62,23 +62,23 @@ export class AppComponent implements OnInit {
       titre: true,
     },
     {
-      nom: 'Maquillage et coiffure',
+      nom: 'Forfait Invitée Complet',
       prix: 130,
     },
     {
-      nom: 'Coiffure (Attache complète)',
+      nom: 'Coiffure Invitée (Attache complète)',
       prix: 80,
     },
     {
-      nom: 'Coiffure (Attache partielle)',
+      nom: 'Coiffure Invitée (Attache partielle)',
       prix: 70,
     },
     {
-      nom: 'Brushing Hollywoodien',
+      nom: 'Brushing Hollywoodien Invitée',
       prix: 70,
     },
     {
-      nom: 'Maquillage',
+      nom: 'Maquillage Invitée',
       prix: 65,
     },
     {
@@ -196,7 +196,7 @@ export class AppComponent implements OnInit {
     let prix = presta.prix * presta.qte;
     if (presta.reduc) prix = prix - (prix * presta.reduc) / 100;
     if (presta.kilorly && presta.qte < 11) prix = 0;
-    return prix;
+    return Math.floor(prix);
   }
 
   calcTot() {
@@ -206,7 +206,7 @@ export class AppComponent implements OnInit {
       .forEach((presta: any) => {
         prix += this.calc(presta);
       });
-    return prix;
+    return Math.floor(prix);
   }
 
   getDevis() {

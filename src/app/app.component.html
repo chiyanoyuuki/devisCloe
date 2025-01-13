@@ -42,11 +42,17 @@
           </p>
           <p class="textoverflow">{{ presta.nom }}</p>
           <p>
-            {{ presta.prix }}{{ presta.kilorly ? "/km" : ""
-            }}{{ presta.hourly ? "/h" : "" }}€
+            {{ presta.prix
+            }}{{
+              presta.prix < 100 && !presta.kilorly && !presta.hourly
+                ? ",00"
+                : ""
+            }}{{ presta.kilorly ? "/km" : "" }}{{ presta.hourly ? "/h" : "" }}€
           </p>
           <p>{{ presta.reduc }}{{ presta.reduc ? "%" : "" }}</p>
-          <p *ngIf="calc(presta) > 0">{{ calc(presta) | number : "1.0-2" }}€</p>
+          <p *ngIf="calc(presta) > 0">
+            {{ calc(presta) }}{{ calc(presta) < 100 ? ",00" : "" }}€
+          </p>
           <p *ngIf="calc(presta) == 0" class="green">Offert</p>
         </ng-container>
       </div>
@@ -54,7 +60,7 @@
       <div class="flex">
         <p class="tinytext echeance">Échéance : {{ values[13] }}</p>
         <p class="bold">Total</p>
-        <p class="bold total">{{ calcTot() | number : "1.0-2" }}€</p>
+        <p class="bold total">{{ calcTot() }},00€</p>
       </div>
       <p class="minitxt">TVA Non Applicable - article 293 B du CGI</p>
 
@@ -257,7 +263,7 @@
         <input type="text" [(ngModel)]="values[13]" placeholder="Échéance.." />
       </div>
       <div class="flex right big">
-        <p>Total : {{ calcTot() | number : "1.0-2" }}€</p>
+        <p>Total : {{ calcTot() }},00€</p>
       </div>
     </div>
 
