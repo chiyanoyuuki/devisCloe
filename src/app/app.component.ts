@@ -42,20 +42,24 @@ export class AppComponent implements OnInit {
       nom: 'Forfait Mariée Complet',
       prix: 420,
       onlyOne: true,
+      bride: true,
     },
     {
       nom: 'Maquillage Mariée ',
       prix: 220,
       onlyOne: true,
+      bride: true,
     },
     {
       nom: 'Coiffure Mariée',
       prix: 220,
       onlyOne: true,
+      bride: true,
     },
     {
       nom: 'Maquillage et coiffure supplémentaire (Mariage civil, seconde muse en beauté)',
       prix: 300,
+      bride: true,
     },
     {
       nom: 'Invitée (jour-J)',
@@ -114,6 +118,7 @@ export class AppComponent implements OnInit {
     },
   ];
 
+  mode = 'devis';
   public innerWidth: any = window.innerWidth;
   public innerHeight: any = window.innerHeight;
   paysage = true;
@@ -132,8 +137,10 @@ export class AppComponent implements OnInit {
     const now = new Date();
     let twoweeks = new Date();
     twoweeks = new Date(twoweeks.getTime() + 14 * 24 * 60 * 60 * 1000);
+    let sixmonth = new Date();
+    sixmonth = new Date(sixmonth.getTime() + 30 * 24 * 6 * 60 * 60 * 1000);
     this.values[0] = this.datePipe.transform(now, 'dd/MM/yyyy') || '';
-    this.values[1] = '2';
+    this.values[1] = '1';
     this.values[2] = this.datePipe.transform(now, 'yyyy') || '';
     this.values[3] = 'Cloé Chaudron';
     this.values[5] = '126 Rue de la Cerisaie';
@@ -141,6 +148,9 @@ export class AppComponent implements OnInit {
     this.values[9] = '06.68.64.44.02';
     this.values[11] = 'cloe.chaudron@outlook.com';
     this.values[13] = this.datePipe.transform(twoweeks, 'dd/MM/yyyy') || '';
+    this.values[14] = this.datePipe.transform(sixmonth, 'dd/MM/yyyy') || '';
+    this.values[15] = '';
+    this.values[16] = 'Virement';
 
     this.prestas.forEach((presta: any) => {
       presta.qte = 0;
@@ -150,7 +160,7 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     if (this.innerHeight > this.innerWidth) this.paysage = false;
     else this.paysage = true;
-    this.getDevis();
+    //this.getDevis();
   }
 
   generatePDFfromHTML() {
@@ -178,13 +188,14 @@ export class AppComponent implements OnInit {
       }
 
       let nom = 'DEVIS_';
+      if (this.mode == 'facture') nom = 'FACTURE_';
       if (this.values[1] < 100) nom = nom + '0';
       if (this.values[1] < 10) nom = nom + '0';
       nom = nom + this.values[1];
       nom = nom + '_' + this.values[2];
 
       pdf.save(nom + '.pdf');
-      this.trackVisit();
+      //this.trackVisit();
     });
   }
 
@@ -199,13 +210,25 @@ export class AppComponent implements OnInit {
     return Math.floor(prix);
   }
 
-  calcTot() {
+  calcTot(calcDeja: boolean = false) {
     let prix = 0;
     this.prestas
       .filter((presta: any) => presta.qte > 0)
       .forEach((presta: any) => {
         prix += this.calc(presta);
       });
+    if (calcDeja && this.values[15] != '') prix = prix - this.values[15];
+    return Math.floor(prix);
+  }
+
+  calcares() {
+    let prix = 0;
+    this.prestas
+      .filter((presta: any) => presta.bride && presta.qte > 0)
+      .forEach((presta: any) => {
+        prix += this.calc(presta);
+      });
+    if (prix != 0) prix = 0.3 * prix;
     return Math.floor(prix);
   }
 
@@ -217,7 +240,6 @@ export class AppComponent implements OnInit {
           '://chiyanh.cluster031.hosting.ovh.net/devisget'
       )
       .subscribe((data) => {
-        console.log(data);
         this.values[1] = data.num;
       });
   }

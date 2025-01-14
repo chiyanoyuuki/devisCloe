@@ -135,12 +135,28 @@ p {
   width: 15%;
   text-align: right;
 }
-.minitxt {
-  font-size: 8px !important;
+.boutons {
+  justify-content: space-evenly;
+  button {
+    width: 30%;
+  }
+}
+.resume {
   position: relative;
-  text-align: right;
+  top: 100px;
+}
+.minitxt {
+  position: relative;
   width: 100%;
   top: -4px;
+  p {
+    font-size: 12px !important;
+    width: 100%;
+  }
+  .tva {
+    text-align: right;
+    font-size: 8px !important;
+  }
 }
 .infos p {
   font-size: 9px !important;
