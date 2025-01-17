@@ -53,7 +53,7 @@
             }}{{ presta.hourly && presta.qte != "?" ? "h" : "" }}
           </p>
           <p class="textoverflow">
-            {{ lg == "Français" ? presta.nom : presta.en }}
+            {{ lg == "Anglais" && presta.en ? presta.en : presta.nom }}
           </p>
           <p>
             {{ presta.prix
