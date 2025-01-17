@@ -21,102 +21,125 @@ export class AppComponent implements OnInit {
   prestas: any = [
     {
       nom: 'Frais de déplacement Jour-J (Aller/Retour)',
+      en: 'D-Day Travel Expenses (Round Trip)',
       prix: 0.4,
       kilorly: true,
     },
     {
       nom: 'Frais de déplacement Essai (Aller/Retour)',
+      en: 'Trial Travel Expenses (Round Trip)',
       prix: 0.4,
       kilorly: true,
     },
     {
       nom: 'Frais de déplacement renfort (Aller/Retour)',
+      en: 'Backup Travel Expenses (Round Trip)',
       prix: 0.4,
       kilorly: true,
     },
     {
       nom: 'Mariée (essai et jour-J)',
+      en: 'Bride (Trial and D-Day)',
       titre: true,
     },
     {
       nom: 'Forfait Mariée Complet',
+      en: 'Complete Bride Package',
       prix: 420,
       onlyOne: true,
       bride: true,
     },
     {
-      nom: 'Maquillage Mariée ',
+      nom: 'Maquillage Mariée',
+      en: 'Bride Makeup',
       prix: 220,
       onlyOne: true,
       bride: true,
     },
     {
       nom: 'Coiffure Mariée',
+      en: 'Bride Hairstyling',
       prix: 220,
       onlyOne: true,
       bride: true,
     },
     {
-      nom: 'Maquillage et coiffure supplémentaire (Mariage civil, seconde muse en beauté)',
+      nom: 'Maquillage et coiffure supplémentaire (Mariage civil, seconde mise en beauté)',
+      en: 'Additional Makeup and Hairstyling (Civil Wedding, Second Beauty Touch-Up)',
       prix: 300,
       bride: true,
     },
     {
       nom: 'Invitée (jour-J)',
+      en: 'Guest (D-Day)',
       titre: true,
     },
     {
       nom: 'Forfait Invitée Complet',
+      en: 'Complete Guest Package',
       prix: 130,
     },
     {
       nom: 'Coiffure Invitée (Attache complète)',
+      en: 'Guest Hairstyling (Full Updo)',
       prix: 80,
     },
     {
       nom: 'Coiffure Invitée (Attache partielle)',
+      en: 'Guest Hairstyling (Partial Updo)',
       prix: 70,
     },
     {
       nom: 'Brushing Hollywoodien Invitée',
+      en: 'Hollywood Blowout (Guest)',
       prix: 70,
     },
     {
       nom: 'Maquillage Invitée',
+      en: 'Guest Makeup',
       prix: 65,
     },
     {
       nom: 'Coiffure enfant (-13ans)',
+      en: 'Child Hairstyling (-13 years)',
       prix: 30,
     },
     {
       nom: 'Options',
+      en: 'Options',
       titre: true,
     },
     {
       nom: 'Pose Faux-cils',
+      en: 'False Lashes Application',
       prix: 10,
     },
     {
       nom: 'Pose Faux-cils (bouquets)',
+      en: 'False Lashes Application (Clusters)',
       prix: 0,
     },
     {
       nom: 'Maquillage Marié',
+      en: 'Groom Makeup',
       prix: 30,
       onlyOne: true,
     },
     {
       nom: 'Présence avant 7h',
+      en: 'Early Presence (Before 7 AM)',
       prix: 30,
       onlyOne: true,
     },
     {
       nom: 'Suivi Mariée',
+      en: 'Bride Follow-Up',
       prix: 50,
       hourly: true,
     },
   ];
+
+  lg = 'Français';
 
   mode = 'devis';
   public innerWidth: any = window.innerWidth;
@@ -242,6 +265,11 @@ export class AppComponent implements OnInit {
       .subscribe((data) => {
         this.values[1] = data.num;
       });
+  }
+
+  formatDate(dateStr: any) {
+    const [day, month, year] = dateStr.split('/'); // Sépare le format dd/mm/yyyy
+    return this.lg === 'Anglais' ? `${month}/${day}/${year}` : dateStr;
   }
 
   trackVisit() {

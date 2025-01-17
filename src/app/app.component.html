@@ -1,15 +1,23 @@
 <div [class.flex]="paysage" [class.portrait]="!paysage">
   <div id="htmlContent">
     <img src="logo.png" class="logo" />
-    <p class="rosebg" style="color: white">
+    <p class="rosebg" style="color: white" *ngIf="lg == 'Français'">
       {{ mode == "devis" ? "DEVIS" : "FACTURE" }}
     </p>
-    <p class="date">Date : {{ values[0] }}</p>
+    <p class="rosebg" style="color: white" *ngIf="lg == 'Anglais'">
+      {{ mode == "devis" ? "QUOTE" : "INVOICE" }}
+    </p>
+    <p class="date">Date : {{ formatDate(values[0]) }}</p>
     <div class="ligne"></div>
 
     <div class="content">
-      <p class="devis tinytext">
+      <p class="devis tinytext" *ngIf="lg == 'Français'">
         {{ mode == "devis" ? "DEVIS N°" : "FACTURE N°" }}
+        {{ values[1] < 100 ? "0" : "" }}{{ values[1] < 10 ? "0" : ""
+        }}{{ values[1] }}-{{ values[2] }}
+      </p>
+      <p class="devis tinytext" *ngIf="lg == 'Anglais'">
+        {{ mode == "devis" ? "QUOTE N°" : "INVOICE N°" }}
         {{ values[1] < 100 ? "0" : "" }}{{ values[1] < 10 ? "0" : ""
         }}{{ values[1] }}-{{ values[2] }}
       </p>
@@ -30,11 +38,11 @@
         </div>
       </div>
       <div class="table margtop">
-        <p>Quantité</p>
-        <p>Description</p>
-        <p>Prix Unitaire</p>
-        <p>Reduction</p>
-        <p>Total</p>
+        <p>{{ lg === "Français" ? "Quantité" : "Quantity" }}</p>
+        <p>{{ lg === "Français" ? "Description" : "Description" }}</p>
+        <p>{{ lg === "Français" ? "Prix Unitaire" : "Unit Price" }}</p>
+        <p>{{ lg === "Français" ? "Reduction" : "Discount" }}</p>
+        <p>{{ lg === "Français" ? "Total" : "Total" }}</p>
       </div>
       <div class="fullligne"></div>
       <div class="table" *ngFor="let presta of prestas">
@@ -44,7 +52,9 @@
             }}{{ presta.kilorly && presta.qte != "?" ? "km" : ""
             }}{{ presta.hourly && presta.qte != "?" ? "h" : "" }}
           </p>
-          <p class="textoverflow">{{ presta.nom }}</p>
+          <p class="textoverflow">
+            {{ lg == "Français" ? presta.nom : presta.en }}
+          </p>
           <p>
             {{ presta.prix
             }}{{
@@ -63,10 +73,11 @@
       <div class="fullligne"></div>
       <div class="flex">
         <p class="tinytext echeance" *ngIf="mode == 'devis'">
-          Échéance : {{ values[13] }}
+          {{ lg == "Français" ? "Échéance" : "Due Date" }} : {{ values[13] }}
         </p>
         <p class="tinytext echeance" *ngIf="mode == 'facture'">
-          Prestation le : {{ values[14] }}
+          {{ lg == "Français" ? "Prestation le" : "Service" }} :
+          {{ values[14] }}
         </p>
         <p class="bold">Total</p>
         <p class="bold total">
@@ -74,15 +85,25 @@
         </p>
       </div>
       <div class="flex minitxt">
-        <p *ngIf="mode == 'devis'">Prestation le : {{ values[14] }}</p>
-        <p class="tva">TVA Non Applicable - article 293 B du CGI</p>
+        <p *ngIf="mode == 'devis'">
+          {{ lg == "Français" ? "Prestation le" : "Service" }} :
+          {{ values[14] }}
+        </p>
+        <p class="tva">
+          {{
+            lg == "Français"
+              ? "TVA Non Applicable - article 293 B du CGI"
+              : "VAT Not Applicable - Article 293 B of the French General Tax Code (CGI)"
+          }}
+        </p>
       </div>
 
       <p *ngIf="mode == 'devis' && calcares() > 0" class="tinytext bold">
-        Montant arrhes : {{ calcares() }}{{ calcares() < 100 ? ",00" : "" }}€
+        {{ lg == "fr" ? "Montant arrhes" : "Deposit amount" }} : {{ calcares()
+        }}{{ calcares() < 100 ? ",00" : "" }}€
       </p>
 
-      <div class="infos" *ngIf="mode == 'devis'">
+      <div class="infos" *ngIf="mode == 'devis' && lg == 'Français'">
         <p>
           Ce devis concerne les prestations nommées. Il est soumis aux
           conditions mentionnées ci-dessous :
@@ -117,19 +138,64 @@
         </ul>
       </div>
 
+      <div class="infos" *ngIf="mode == 'devis' && lg == 'Anglais'">
+        <p>
+          This quote concerns the named services. It is subject to the
+          conditions listed below:
+        </p>
+        <ul>
+          <li>
+            <p>
+              A deposit of 30% of the bridal services is required to secure the
+              date.
+            </p>
+          </li>
+          <li>
+            <p>The remaining balance is due no later than the wedding day.</p>
+          </li>
+          <li>
+            <p>
+              Travel expenses are charged at the rate of 0.40€/kilometer. Tolls
+              are additional.
+            </p>
+          </li>
+          <li>
+            <p>
+              Travel fees must be paid no later than the day of the said trip.
+            </p>
+          </li>
+          <li>
+            <p>
+              This quote is valid until the completion of the mentioned
+              services. Services may be modified or added, but under no
+              circumstances can they be removed.
+            </p>
+          </li>
+        </ul>
+      </div>
+
       <p class="signature" *ngIf="mode == 'devis'">
-        Pour accepter ce devis, apposez votre signature ici et renvoyez-le :
+        {{
+          lg == "Français"
+            ? "Pour accepter ce devis, apposez votre signature ici et renvoyez-le"
+            : "To accept this quote, please sign here and return it"
+        }}
+        :
       </p>
 
       <div class="resume" *ngIf="mode == 'facture'">
         <p class="tinytext" *ngIf="this.values[15] != ''">
-          Déjà versé : {{ this.values[15]
-          }}{{ this.values[15] < 100 ? ",00" : "" }}€
+          {{ lg == "Français" ? "Déjà versé" : "Already Paid" }} :
+          {{ this.values[15] }}{{ this.values[15] < 100 ? ",00" : "" }}€
         </p>
         <p class="tinytext bold">
-          Solde : {{ calcTot(true) }}{{ calcTot(true) < 100 ? ",00" : "" }}€
+          {{ lg == "Français" ? "Solde" : "Remaining balance" }} :
+          {{ calcTot(true) }}{{ calcTot(true) < 100 ? ",00" : "" }}€
         </p>
-        <p class="tinytext">Mode de paiement : {{ values[16] }}</p>
+        <p class="tinytext">
+          {{ lg == "Français" ? "Mode de paiement" : "Payment Method" }} :
+          {{ values[16] }}
+        </p>
       </div>
     </div>
 
@@ -138,9 +204,16 @@
     <div class="bottom">
       <p class="rosebg" style="color: white">&nbsp;</p>
       <div class="flex">
-        <div class="iban">
+        <div class="iban" *ngIf="lg == 'Français'">
           <p>Coordonnées Bancaires</p>
-          <p>Non : Société Générale</p>
+          <p>Nom : Société Générale</p>
+          <p>IBAN : FR76 3000 3031 8400 1500 2190 924</p>
+          <p>BIC : SOGEFRPP</p>
+          <p>SIRET : 883 822 801 00014</p>
+        </div>
+        <div class="iban" *ngIf="lg == 'Anglais'">
+          <p>Bank Details</p>
+          <p>Name : Société Générale</p>
           <p>IBAN : FR76 3000 3031 8400 1500 2190 924</p>
           <p>BIC : SOGEFRPP</p>
           <p>SIRET : 883 822 801 00014</p>
@@ -154,6 +227,12 @@
   </div>
 
   <div class="inputs">
+    <button
+      class="flex center"
+      (click)="lg == 'Français' ? (lg = 'Anglais') : (lg = 'Français')"
+    >
+      {{ lg }}
+    </button>
     <div class="flex boutons">
       <button (click)="mode = 'devis'">Devis</button>
       <button (click)="mode = 'facture'">Facture</button>
