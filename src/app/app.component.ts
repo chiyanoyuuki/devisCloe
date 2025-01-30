@@ -139,6 +139,21 @@ export class AppComponent implements OnInit {
     },
   ];
 
+  typeinvitee = ["Invitée","Mariée"]
+
+  collegues = [
+    ["Cloé","CHAUDRON","06.68.64.44.02","cloe.chaudron@outlook.com"],
+    ["Celma","SAHIDET","06.80.84.42.52","sahidetcelma@gmail.com"]
+  ]
+
+  invitees:any = [[0,"8h30","8h45","9h00","9h00","10h15","15h30 à 16h00","jusqu'à 16h00","16h00",0]];
+
+  planningtop = [{
+    fr:"ARRIVEE"
+  },{
+    fr:"INSTALLATION"
+  },{fr:"MAQUILLAGE"},{fr:"COIFFURE"},{fr:"FIN PRESTATION"},{fr:"RETOUCHES"},{fr:"DISPONIBILITE"},{fr:"CEREMONIE"}]
+
   lg = 'Français';
 
   mode = 'devis';
@@ -157,6 +172,7 @@ export class AppComponent implements OnInit {
   }
 
   constructor(private datePipe: DatePipe, private http: HttpClient) {
+    if(isDevMode())this.mode="planning";
     const now = new Date();
     let twoweeks = new Date();
     twoweeks = new Date(twoweeks.getTime() + 14 * 24 * 60 * 60 * 1000);
@@ -174,6 +190,11 @@ export class AppComponent implements OnInit {
     this.values[14] = this.datePipe.transform(sixmonth, 'dd/MM/yyyy') || '';
     this.values[15] = '';
     this.values[16] = 'Virement';
+    this.values[50] = "PLANNING";
+    this.values[51] = this.datePipe.transform(sixmonth, 'dd/MM/yyyy') || '';
+    this.values[52] = "";
+    this.values[53] = "";
+    this.values[54] = "";
 
     this.prestas.forEach((presta: any) => {
       presta.qte = 0;
@@ -186,10 +207,152 @@ export class AppComponent implements OnInit {
     //this.getDevis();
   }
 
+  checkRow(row: number, col: number, c:number): number {
+    let tab = this.getInvitees(c);
+
+    const value = tab[row][col];
+    let count = 1;
+    
+    for (let i = row + 1; i < tab.length; i++) {
+        if (value != "" && tab[i][col] === value) {
+            count++;
+        } else {
+            break;
+        }
+    }
+
+    return count;
+}
+
+calculate()
+{
+  this.invitees.sort((a:any,b:any)=>{return (this.toDate(a[5]) - this.toDate(b[5]))});
+}
+
+addInvitee()
+{
+  this.calculate();
+  
+
+  this.invitees.push([
+    0,
+    "",
+    "",
+    this.invitees.length>0?this.invitees[this.invitees.length-1][5]:"",
+    this.invitees.length>0?this.invitees[this.invitees.length-1][5]:"",
+    this.invitees.length>0?this.addMinutesToTime(this.invitees[this.invitees.length-1][5],75):"",
+    this.invitees.length>0?this.invitees[this.invitees.length-1][6]:"",
+    this.invitees.length>0?this.invitees[this.invitees.length-1][7]:"",
+    this.invitees.length>0?this.invitees[this.invitees.length-1][8]:"",
+    this.invitees.length>0?this.invitees[this.invitees.length-1][9]:0
+  ]);
+}
+
+getInvitees(c:any)
+{
+  return this.invitees.filter((i:any)=>i[9]==c);
+}
+
+trackByIndex(index: number, item: any): number {
+  return index;
+}
+
+getNbInvitee(c:number, i:number, t:any)
+{
+  let tab = this.getInvitees(c);
+  let count = 1;
+  for(let x=0;x<i;x++)
+  {
+    if(tab[x][0]==t)count++;
+  }
+  return count;
+}
+
+changetypeinvitee(i:number)
+{
+  let invitee = this.invitees[i];
+  if(invitee[0]==1)
+  {
+    if(invitee[3]!=""&&invitee[4]!="")invitee[5]=this.addMinutesToTime(invitee[3],120);
+    else if(invitee[3]!="")invitee[5]=this.addMinutesToTime(invitee[3],60);
+    else if(invitee[4]!="")invitee[5]=this.addMinutesToTime(invitee[4],60);
+  }
+  else if(invitee[0]==0)
+  {
+    if(invitee[3]!=""&&invitee[4]!="")invitee[5]=this.addMinutesToTime(invitee[3],75);
+    else if(invitee[3]!="")invitee[5]=this.addMinutesToTime(invitee[3],45);
+    else if(invitee[4]!="")invitee[5]=this.addMinutesToTime(invitee[4],45);
+  }
+}
+
+toDate(time:string):any
+{
+  let [hours, minutes] = time.split("h").map(Number);
+
+  // Créer un objet Date avec l'heure et les minutes
+  let date = new Date();
+  date.setHours(hours);
+  date.setMinutes(minutes);
+
+  return date;
+}
+
+addMinutesToTime(timeStr: string, minutesToAdd: number): string {
+  // Extraire l'heure et les minutes depuis le format "HHhMM"
+  let [hours, minutes] = timeStr.split("h").map(Number);
+
+  // Créer un objet Date avec l'heure et les minutes
+  let date = new Date();
+  date.setHours(hours);
+  date.setMinutes(minutes + minutesToAdd);
+
+  // Récupérer la nouvelle heure et minutes
+  let newHours = date.getHours();
+  let newMinutes = date.getMinutes();
+
+  let retour = newHours + 'h' +(newMinutes<10?newMinutes+'0':newMinutes);
+
+  // Formater en "HHhMM" (ajout d'un zéro si besoin)
+  return retour;
+}
+
+deleteInvitee(i:any)
+{
+  this.invitees.splice(i,1);
+
+  this.calculate();
+}
+
+checkCol(row: number, col: number, c:number): number {
+  let tab = this.getInvitees(c);
+
+  const value = tab[row][col];
+  let count = 1;
+  
+  for (let i = col + 1; i < tab[row].length; i++) {
+      if (value != "" && tab[row][i] === value) {
+          count++;
+      } else {
+          break;
+      }
+  }
+
+  return count;
+}
+
+checkDisplay(row: number, col: number, c:number) {
+  let tab = this.getInvitees(c);
+
+  const value = tab[row][col];
+  if(value != "" && tab[row][col-1]===value) return true;
+  if(row>0&&value != "" && tab[row-1][col]===value) return true;
+  else return false;
+}
+
   generatePDFfromHTML() {
     const element = document.getElementById('htmlContent');
 
-    html2canvas(element!, { scale: 4 }).then((canvas) => {
+    html2canvas(element!, { scale: 3 }).then((canvas) => {
       const imgData = canvas.toDataURL('image/png');
       const pdf = new jsPDF('p', 'mm', 'a4');
 
@@ -212,14 +375,26 @@ export class AppComponent implements OnInit {
 
       let nom = 'DEVIS_';
       if (this.mode == 'facture') nom = 'FACTURE_';
-      if (this.values[1] < 100) nom = nom + '0';
-      if (this.values[1] < 10) nom = nom + '0';
-      nom = nom + this.values[1];
-      nom = nom + '_' + this.values[2];
+      if (this.mode == 'planning')
+      {
+        nom = 'PLANNING_'+this.values[51];
+      }
+      else
+      {
+        if (this.values[1] < 100) nom = nom + '0';
+        if (this.values[1] < 10) nom = nom + '0';
+        nom = nom + this.values[1];
+        nom = nom + '_' + this.values[2];
+      }
 
       pdf.save(nom + '.pdf');
       //this.trackVisit();
     });
+  }
+
+  addCollegue()
+  {
+    this.collegues.push(["","","",""]);
   }
 
   addPresta() {

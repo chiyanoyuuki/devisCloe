@@ -1,5 +1,5 @@
 <div [class.flex]="paysage" [class.portrait]="!paysage">
-  <div id="htmlContent">
+  <div id="htmlContent" *ngIf="mode!='planning'" class="noplanning">
     <img src="logo.png" class="logo" />
     <p class="rosebg" style="color: white" *ngIf="lg == 'Français'">
       {{ mode == "devis" ? "DEVIS" : "FACTURE" }}
@@ -99,7 +99,7 @@
       </div>
 
       <p *ngIf="mode == 'devis' && calcares() > 0" class="tinytext bold">
-        {{ lg == "fr" ? "Montant arrhes" : "Deposit amount" }} : {{ calcares()
+        {{ lg == "Français" ? "Montant arrhes" : "Deposit amount" }} : {{ calcares()
         }}{{ calcares() < 100 ? ",00" : "" }}€
       </p>
 
@@ -226,6 +226,98 @@
     </div>
   </div>
 
+  <div id="htmlContent" *ngIf="mode=='planning'">
+    <img src="logo.png" class="logo" />
+    <p class="rosebg" style="color: white" *ngIf="lg == 'Français'">
+      {{ values[50] }}
+    </p>
+    <p class="date">Date : {{ formatDate(values[51]) }}</p>
+    <div class="ligne"></div>
+
+    <div class="content">
+      <div class="tableplann">
+        <div *ngFor="let top of planningtop" class="relative containerline">
+          <div class="orientedline"></div>
+          <p>&nbsp;</p>
+        </div>
+        <div class="absolute">
+          <div *ngFor="let top of planningtop;let i=index" class="relative">
+            <p>{{top.fr}}</p>
+          </div>
+        </div>
+        
+      </div>
+      
+      <ng-container *ngFor="let collegue of collegues;let c=index">
+      <table *ngIf="getInvitees(c).length>0">
+        <tr class="firstrow">
+          <p class="invitee">&nbsp;</p>
+          <td class="horaire">&nbsp;</td>
+          <td class="horaire">&nbsp;</td>
+          <td class="horaire">&nbsp;</td>
+          <td class="horaire">&nbsp;</td>
+          <td class="horaire">&nbsp;</td>
+          <td class="horaire">&nbsp;</td>
+          <td class="horaire">&nbsp;</td>
+          <td class="horaire">&nbsp;</td>
+          <td class="horaire">&nbsp;</td>
+        </tr>
+        <tr *ngFor="let invitee of getInvitees(c);let i=index" class="relative">
+          <p class="invitee" [class.onlyonerow]="getInvitees(c).length==1">{{typeinvitee[invitee[0]] + ' ' + (invitee[0]==0?getNbInvitee(c,i,invitee[0]):'')}}</p>
+          <td class="horaire noborder" [class.odd]="i%2!=0">&nbsp;</td>
+          <ng-container *ngFor="let horaire of invitee;let j=index">
+            <td *ngIf="j>0&&j<9" class="horaire" [attr.rowspan]="checkRow(i, j,c)" [attr.colspan]="checkCol(i, j,c)" [class.none]="checkDisplay(i,j,c)" [class.odd]="i%2!=0">{{horaire}}</td>
+          </ng-container>
+          </tr>
+      </table>
+      <p class="artist" *ngIf="getInvitees(0).length!=invitees.length">Artiste : {{collegue[0]+" "+collegue[1]}}</p>
+    </ng-container>
+      
+    </div>
+
+    
+
+    <div class="bottom" *ngIf="mode!='planning'">
+      <p class="rosebg" style="color: white">&nbsp;</p>
+      <div class="flex">
+        <div class="iban" *ngIf="lg == 'Français'">
+          <p>Coordonnées Bancaires</p>
+          <p>Nom : Société Générale</p>
+          <p>IBAN : FR76 3000 3031 8400 1500 2190 924</p>
+          <p>BIC : SOGEFRPP</p>
+          <p>SIRET : 883 822 801 00014</p>
+        </div>
+        <div class="iban" *ngIf="lg == 'Anglais'">
+          <p>Bank Details</p>
+          <p>Name : Société Générale</p>
+          <p>IBAN : FR76 3000 3031 8400 1500 2190 924</p>
+          <p>BIC : SOGEFRPP</p>
+          <p>SIRET : 883 822 801 00014</p>
+        </div>
+        <div class="thank">
+          <p>THANK</p>
+          <p>YOU</p>
+        </div>
+      </div>
+    </div>
+    <div class="bottomplann">
+      <p class="rosebg" style="color: white">&nbsp;</p>
+      <div class="adres">
+        <p>{{values[52]==""?"Domaine":values[52]}}</p>
+        <p>{{values[53]==""?"Adresse":values[53]}}</p>
+        <p>{{values[54]==""?"Code postal + Ville":values[54]}}</p>
+      </div>
+      <p class="cont">CONTACT</p>
+      <div class="flex between">
+        <div *ngFor="let collegue of collegues">
+          <p>{{collegue[0]+" "+collegue[1]}}</p>
+          <p>{{collegue[2]}}</p>
+          <p>{{collegue[3]}}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="inputs">
     <button
       class="flex center"
@@ -236,19 +328,21 @@
     <div class="flex boutons">
       <button (click)="mode = 'devis'">Devis</button>
       <button (click)="mode = 'facture'">Facture</button>
+      <button (click)="mode = 'planning'">Planning</button>
     </div>
     <div class="flex center">
       <p>Date :</p>
-      <input type="text" [(ngModel)]="values[0]" placeholder="Date.." />
+      <input type="text" *ngIf="mode!='planning'" [(ngModel)]="values[0]" placeholder="Date.." />
+      <input type="text" *ngIf="mode=='planning'" [(ngModel)]="values[51]" placeholder="Date.." />
     </div>
     <div class="ligne"></div>
-    <div class="flex right">
+    <div class="flex right" *ngIf="mode!='planning'">
       <p>{{ mode == "devis" ? "Devis N°" : "Facture N°" }}</p>
       <input type="text" [(ngModel)]="values[1]" placeholder="N° du devis.." />
       <p>-</p>
       <input type="text" [(ngModel)]="values[2]" placeholder="Année.." />
     </div>
-    <div class="flex between">
+    <div class="flex between" *ngIf="mode!='planning'">
       <div class="flex big">
         <input type="text" [(ngModel)]="values[3]" placeholder="Nom Cloé.." />
       </div>
@@ -256,7 +350,7 @@
         <input type="text" [(ngModel)]="values[4]" placeholder="Nom client.." />
       </div>
     </div>
-    <div class="flex between">
+    <div class="flex between" *ngIf="mode!='planning'">
       <div class="flex big">
         <input
           type="text"
@@ -272,7 +366,7 @@
         />
       </div>
     </div>
-    <div class="flex between">
+    <div class="flex between" *ngIf="mode!='planning'">
       <div class="flex big">
         <input
           type="text"
@@ -288,7 +382,7 @@
         />
       </div>
     </div>
-    <div class="flex between">
+    <div class="flex between" *ngIf="mode!='planning'">
       <div class="flex big">
         <input
           type="text"
@@ -304,7 +398,7 @@
         />
       </div>
     </div>
-    <div class="flex between">
+    <div class="flex between" *ngIf="mode!='planning'">
       <div class="flex big">
         <input type="text" [(ngModel)]="values[11]" placeholder="Mail Cloé.." />
       </div>
@@ -317,7 +411,7 @@
       </div>
     </div>
 
-    <div class="prestas" [class.noOverflow]="!paysage">
+    <div class="prestas" [class.noOverflow]="!paysage" *ngIf="mode!='planning'">
       <div
         *ngFor="let presta of prestas"
         class="flex between"
@@ -369,7 +463,7 @@
       </div>
     </div>
 
-    <div class="flex between">
+    <div class="flex between" *ngIf="mode!='planning'">
       <div class="flex" *ngIf="mode == 'devis'">
         <p>Échéance :</p>
         <input type="text" [(ngModel)]="values[13]" placeholder="Échéance.." />
@@ -379,7 +473,7 @@
       </div>
     </div>
 
-    <div class="flex">
+    <div class="flex" *ngIf="mode!='planning'">
       <p>Prestation le :</p>
       <input type="text" [(ngModel)]="values[14]" placeholder="Mariage le.." />
     </div>
@@ -395,6 +489,62 @@
         placeholder="Mode de paiement.."
       />
     </div>
+
+    <div class="flex">
+      <div class="nomslignes">
+        <p>NOM&nbsp;</p>
+        <p *ngFor="let top of planningtop">{{top.fr}}&nbsp;</p>
+      </div>
+        <div class="dataplanning flex">
+
+        <div *ngFor="let invitee of invitees;let i=index; trackBy: trackByIndex" class="inviteesinput">
+          <select [(ngModel)]="invitee[0]" (change)="changetypeinvitee(i)">
+            <option *ngFor="let type of typeinvitee;let i=index" [ngValue]="i">{{type}}</option>
+          </select>
+          <ng-container *ngFor="let horaire of invitee;let j=index; trackBy: trackByIndex">
+            <input type="text" *ngIf="j!=0&&j<9" [(ngModel)]="invitees[i][j]"/>
+          </ng-container>
+          <select [(ngModel)]="invitee[9]">
+            <option *ngFor="let collegue of collegues;let i=index" [ngValue]="i">{{collegue[0]+" "+collegue[1]}}</option>
+          </select>
+          <button (click)="changetypeinvitee(i)">Calculer</button>
+          <button (click)="deleteInvitee(i)">Supprimer</button>
+        </div>
+      </div>
+      
+    </div>
+    <button class="flex center" (click)="addInvitee()">Ajouter invitée</button>
+
+    <div class="domaine">
+      <div class="flex">
+        <p>Domaine : </p>
+        <input type="text" [(ngModel)]="values[52]" placeholder="Domaine.."/></div>
+        <div class="flex">
+          <p>Adresse : </p>
+          <input type="text" [(ngModel)]="values[53]" placeholder="Adresse.."/></div>
+          <div class="flex">
+            <p>Code postal + Ville : </p>
+            <input type="text" [(ngModel)]="values[54]" placeholder="Code postal + Ville.."/></div>
+    </div>
+
+
+<div class="flex">
+        <div class="dataplanning flex">
+
+        <div *ngFor="let collegue of collegues;let i=index; trackBy: trackByIndex" class="inviteesinput">
+          <ng-container *ngFor="let data of collegue;let j=index; trackBy: trackByIndex">
+            <input type="text" [(ngModel)]="collegues[i][j]"/>
+          </ng-container>
+          <button (click)="deleteInvitee(i)">Supprimer</button>
+        </div>
+      </div>
+      
+    </div>
+    <button class="flex center" (click)="addCollegue()">Ajouter collègue</button>
+    
+    <br/>
+    <br/>
+    <br/>
 
     <div>
       <button (click)="generatePDFfromHTML()" class="flex center">
