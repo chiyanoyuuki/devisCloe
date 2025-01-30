@@ -322,6 +322,10 @@ deleteInvitee(i:any)
 
   this.calculate();
 }
+deleteCollegue(i:any)
+{
+  this.collegues.splice(i,1);
+}
 
 checkCol(row: number, col: number, c:number): number {
   let tab = this.getInvitees(c);
