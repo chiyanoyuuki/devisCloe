@@ -490,7 +490,7 @@
       />
     </div>
 
-    <div class="flex">
+    <div class="flex" *ngIf="mode == 'planning'">
       <div class="nomslignes">
         <p>NOM&nbsp;</p>
         <p *ngFor="let top of planningtop">{{top.fr}}&nbsp;</p>
@@ -513,9 +513,9 @@
       </div>
       
     </div>
-    <button class="flex center" (click)="addInvitee()">Ajouter invitée</button>
+    <button class="flex center" (click)="addInvitee()" *ngIf="mode == 'planning'">Ajouter invitée</button>
 
-    <div class="domaine">
+    <div class="domaine" *ngIf="mode == 'planning'">
       <div class="flex">
         <p>Domaine : </p>
         <input type="text" [(ngModel)]="values[52]" placeholder="Domaine.."/></div>
@@ -528,7 +528,7 @@
     </div>
 
 
-<div class="flex">
+<div class="flex" *ngIf="mode == 'planning'">
         <div class="dataplanning flex">
 
         <div *ngFor="let collegue of collegues;let i=index; trackBy: trackByIndex" class="inviteesinput">
@@ -540,7 +540,7 @@
       </div>
       
     </div>
-    <button class="flex center" (click)="addCollegue()">Ajouter collègue</button>
+    <button class="flex center" (click)="addCollegue()" *ngIf="mode == 'planning'">Ajouter collègue</button>
     
     <br/>
     <br/>
