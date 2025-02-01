@@ -408,7 +408,7 @@ checkDisplay(row: number, col: number, c:number) {
   calc(presta: any) {
     let prix = presta.prix * presta.qte;
     if (presta.reduc) prix = prix - (prix * presta.reduc) / 100;
-    if (presta.kilorly && presta.qte < 11) prix = 0;
+    if (presta.kilorly && presta.qte < 21) prix = 0;
     return Math.floor(prix);
   }
 
