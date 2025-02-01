@@ -44,7 +44,7 @@ input {
   width: 100%;
   margin: 2px 0px;
 }
-.big input {
+.big input, .big button{
   width: 180px;
 }
 .logo {
@@ -80,6 +80,9 @@ p {
 }
 .margtop {
   margin-top: 25px;
+}
+.marg{
+  padding:20px!important;
 }
 .content {
   padding: 0px 15px;

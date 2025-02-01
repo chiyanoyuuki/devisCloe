@@ -48,8 +48,9 @@
       <div class="table" *ngFor="let presta of prestas">
         <ng-container *ngIf="presta.qte > 0 || presta.qte == '?'">
           <p>
-            {{ presta.qte == "?" ? "À definir" : presta.qte
-            }}{{ presta.kilorly && presta.qte != "?" ? "km" : ""
+            {{ presta.qte == "?" ? "À definir" : "" }}
+            {{ presta.qte != "?" && presta.kilorly ? (presta.qte * 2) : presta.qte}}
+            {{ presta.kilorly && presta.qte != "?" ? "km" : ""
             }}{{ presta.hourly && presta.qte != "?" ? "h" : "" }}
           </p>
           <p class="textoverflow">
@@ -248,7 +249,7 @@
         
       </div>
       
-      <ng-container *ngFor="let collegue of collegues;let c=index">
+      <ng-container *ngFor="let collegue of getCollegues();let c=index">
       <table *ngIf="getInvitees(c).length>0">
         <tr class="firstrow">
           <p class="invitee">&nbsp;</p>
@@ -309,7 +310,7 @@
       </div>
       <p class="cont">CONTACT</p>
       <div class="flex between">
-        <div *ngFor="let collegue of collegues">
+        <div *ngFor="let collegue of getCollegues()">
           <p>{{collegue[0]+" "+collegue[1]}}</p>
           <p>{{collegue[2]}}</p>
           <p>{{collegue[3]}}</p>
@@ -513,7 +514,14 @@
       </div>
       
     </div>
-    <button class="flex center" (click)="addInvitee()" *ngIf="mode == 'planning'">Ajouter invitée</button>
+    <div class="flex big center">
+      <button (click)="remplir(6)">Remplir retouches</button>
+      <button (click)="remplir(7)">Remplir disponibilité</button>
+      <button (click)="remplir(8)">Remplir cérémonie</button>
+    </div>
+    <div class="marg">
+      <button class="flex center" (click)="addInvitee()" *ngIf="mode == 'planning'">Ajouter invitée</button>
+    </div>
 
     <div class="domaine" *ngIf="mode == 'planning'">
       <div class="flex">
@@ -540,7 +548,9 @@
       </div>
       
     </div>
+    <div class="marg">
     <button class="flex center" (click)="addCollegue()" *ngIf="mode == 'planning'">Ajouter collègue</button>
+    </div>
     
     <br/>
     <br/>

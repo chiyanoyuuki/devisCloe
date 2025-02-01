@@ -401,14 +401,56 @@ checkDisplay(row: number, col: number, c:number) {
     this.collegues.push(["","","",""]);
   }
 
+  getCollegues()
+  {
+    let retour = [];
+    for(let i=0;i<this.collegues.length;i++)
+    {
+      if(this.getInvitees(i).length>0)retour.push(this.collegues[i]);
+    }
+    return retour;
+  }
+
   addPresta() {
     this.prestas.push({ nom: '', qte: 0, prix: 50, reduc: '' });
   }
 
+  remplir(i:number)
+  {
+    for(let c=0;c<this.collegues.length;c++)
+    {
+      let invitees = this.getInvitees(c);
+      let invitee = invitees.find((inv:any)=>inv[i]!="");
+      
+      if(invitee)
+      {
+        if(i!=8)
+        {
+          invitees.forEach((inv:any)=>{
+            inv[i] = invitee[i];
+          });
+        }
+        else
+        {
+          this.invitees.forEach((inv:any)=>{
+            inv[i] = invitee[i];
+          });
+        }
+      }
+    }
+  }
+
   calc(presta: any) {
     let prix = presta.prix * presta.qte;
+    if(presta.kilorly)
+    {
+      if(presta.qte <= 10) prix = 0;
+      else
+      {
+        prix = (presta.qte - 10) * 2 * presta.prix;
+      }
+    }
     if (presta.reduc) prix = prix - (prix * presta.reduc) / 100;
-    if (presta.kilorly && presta.qte < 21) prix = 0;
     return Math.floor(prix);
   }
 
